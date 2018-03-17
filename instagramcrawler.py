@@ -63,7 +63,7 @@ class InstagramCrawler(object):
     """
     def __init__(self, headless=True, firefox_path=None):
         if headless:
-            print("headless mode on")
+            #print("headless mode on")
             self._driver = webdriver.PhantomJS()
         else:
             # credit to https://github.com/SeleniumHQ/selenium/issues/3884#issuecomment-296990844
@@ -80,7 +80,7 @@ class InstagramCrawler(object):
         self._driver.get(urljoin(HOST, "accounts/login/"))
 
         if authentication:
-            print("Username and password loaded from {}".format(authentication))
+            #print("Username and password loaded from {}".format(authentication))
             with open(authentication, 'r') as fin:
                 auth_dict = json.loads(fin.read())
             # Input username
@@ -124,7 +124,7 @@ class InstagramCrawler(object):
 
         elif crawl_type in ["followers", "following"]:
             # Need to login first before crawling followers/following
-            print("You will need to login to crawl {}".format(crawl_type))
+            #print("You will need to login to crawl {}".format(crawl_type))
             self.login(authentication)
 
             # Then browse target page
@@ -138,11 +138,11 @@ class InstagramCrawler(object):
             self.quit()
             return
         # Save to directory
-        print("Saving...")
+        #print("Saving...")
         self.download_and_save(dir_prefix, query, crawl_type)
 
         # Quit driver
-        print("Quitting driver...")
+        #print("Quitting driver...")
         self.quit()
 
     def browse_target_page(self, query):
@@ -240,7 +240,7 @@ class InstagramCrawler(object):
         self.data['captions'] = captions
 
     def scrape_followers_or_following(self, crawl_type, query, number):
-        print("Scraping {}...".format(crawl_type))
+        #print("Scraping {}...".format(crawl_type))
         if crawl_type == "followers":
             FOLLOW_ELE = CSS_FOLLOWERS
             FOLLOW_PATH = FOLLOWER_PATH
@@ -248,6 +248,7 @@ class InstagramCrawler(object):
             FOLLOW_ELE = CSS_FOLLOWING
             FOLLOW_PATH = FOLLOWING_PATH
 	
+        
         
         # Locate follow list
         follow_ele = WebDriverWait(self._driver, 5).until(
@@ -258,8 +259,16 @@ class InstagramCrawler(object):
         # when no number defined, check the total items
         if number is 0:
             number = int(filter(str.isdigit, str(follow_ele.text)))
-            print("getting all " + str(number) + " items")
-        valor = (int(str(follow_ele.text).split(' ')[1]))
+            #print("getting all " + str(number) + " items")
+        valor = int("".join(list(filter(str.isdigit, str(follow_ele.text)))))
+        if 'mil ' in str(follow_ele.text):
+            valor = valor * 1000
+        if 'k ' in str(follow_ele.text):
+            valor = valor * 1000  
+        if 'milh' in str(follow_ele.text):
+            valor = valor * 1000000
+        if 'm ' in str(follow_ele.text):
+            valor = valor * 1000000
         # open desired list
         follow_ele.click()
 
@@ -274,28 +283,22 @@ class InstagramCrawler(object):
         # Loop through list till target number is reached
         num_of_shown_follow = len(List.find_elements_by_xpath('*'))
 
-        numberSpaces = int(valor/10) + 5
+        numberSpaces = int(valor/9) + 5
         for i in range(0, numberSpaces): 
-         actions.send_keys(Keys.SPACE).perform()
-         time.sleep(1.5)
-         
+            actions.send_keys(Keys.SPACE).perform()
+            time.sleep(0.6)
          
         element = List.find_elements_by_xpath('*')[-1].text.split('\n')
         size = len(element)
-        print(size)
         myList = []
+        
         for k in range(0,size):
          #if(element[k] == "Seguir"):
           #element = List.find_elements_by_xpath('*')[-1].text.split('\n')
-         if(element[k] == "Verificado"):
-          myList.append(element[k-1])
+            if(element[k] == "Verificado"):
+                myList.append("(" + query + ", " + element[k-1] + ")")
          # Work around for now => should use selenium's Expected Conditions!
-       
-      
-
-        follow_items = []
-        for ele in List.find_elements_by_xpath('*')[:number]:
-            follow_items.append(ele.text.split('\n')[0])
+ 
 
         self.data[crawl_type] = myList
 
@@ -308,7 +311,7 @@ class InstagramCrawler(object):
         if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
-        print("Saving to directory: {}".format(dir_path))
+        #print("Saving to directory: {}".format(dir_path))
 
         # Save Photos
         for idx, photo_link in enumerate(self.data['photo_links'], 0):
