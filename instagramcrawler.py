@@ -298,7 +298,8 @@ class InstagramCrawler(object):
             if(element[k] == "Verificado"):
                 myList.append("(" + query + ", " + element[k-1] + ")")
          # Work around for now => should use selenium's Expected Conditions!
- 
+        if (myList == []):
+            myList.append("(" + query + ", )")
 
         self.data[crawl_type] = myList
 
