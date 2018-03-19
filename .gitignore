@@ -1,0 +1,6 @@
+# prevent terrible mistakes
+auth.json
+
+# driver logs
+geckodriver.log
+ghostdriver.log

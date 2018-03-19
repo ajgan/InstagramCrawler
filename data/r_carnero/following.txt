@@ -1,8 +1,0 @@
-(r_carnero, facebooklife)
-(r_carnero, netflixbrasil)
-(r_carnero, brttoficial)
-(r_carnero, manualdomundo)
-(r_carnero, iss)
-(r_carnero, djokernole)
-(r_carnero, cauemoura)
-(r_carnero, pecesiqueira)
