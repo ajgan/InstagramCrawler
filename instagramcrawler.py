@@ -270,9 +270,7 @@ class InstagramCrawler(object):
         if 'm ' in str(follow_ele.text):
             valor = valor * 1000000
         # open desired list
-        if (valor > 1000):
-            valor = 900
-        follow_ele.click()
+        
 
         title_ele = WebDriverWait(self._driver, 10).until(
             EC.presence_of_element_located(
