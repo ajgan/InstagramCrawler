@@ -255,6 +255,7 @@ class InstagramCrawler(object):
             EC.presence_of_element_located(
                 (By.CSS_SELECTOR, FOLLOW_ELE.format(query)))
         )
+        follow_ele.click()
         
         # when no number defined, check the total items
         if number is 0:
