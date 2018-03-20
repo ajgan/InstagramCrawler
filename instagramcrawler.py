@@ -284,10 +284,19 @@ class InstagramCrawler(object):
         # Loop through list till target number is reached
         num_of_shown_follow = len(List.find_elements_by_xpath('*'))
 
+        prevData = 0
         numberSpaces = int(valor/9) + 5
-        for i in range(0, numberSpaces): 
+        for i in range(0, numberSpaces):
+            if (valor > 1200):
+                if (i % 15 == 0):
+                    userList = List.find_elements_by_xpath('*')[-1].text.split('\n')
+                    newData = len(userList)
+                    if (newData == prevData):
+                        break
+                    else:
+                        prevData = newData
             actions.send_keys(Keys.SPACE).perform()
-            time.sleep(0.6)
+            time.sleep(0.65)
          
         element = List.find_elements_by_xpath('*')[-1].text.split('\n')
         size = len(element)
